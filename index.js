@@ -102,7 +102,11 @@ class UpdateNotifier {
 
 	async fetchInfo() {
 		const {distTag} = this.options;
-		const latest = await latestVersion()(this.packageName, {version: distTag});
+		const options = ['registryUrl', 'fullMetadata', 'allVersions', 'agent'].reduce((prev, cur) => {
+			prev[cur] = this.options[cur];
+			return prev;
+		}, {})
+		const latest = await latestVersion()(this.packageName, {version: distTag, ...options});
 
 		return {
 			latest,
