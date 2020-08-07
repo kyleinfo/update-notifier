@@ -24,6 +24,7 @@ class UpdateNotifier {
 		this.options = options;
 		options.pkg = options.pkg || {};
 		options.distTag = options.distTag || 'latest';
+		options.registryUrl = options.registryUrl || (options.pkg.publishConfig && options.pkg.publishConfig.registry);
 
 		// Reduce pkg to the essential keys. with fallback to deprecated options
 		// TODO: Remove deprecated options at some point far into the future
@@ -102,11 +103,7 @@ class UpdateNotifier {
 
 	async fetchInfo() {
 		const {distTag} = this.options;
-		const options = ['registryUrl', 'fullMetadata', 'allVersions', 'agent'].reduce((prev, cur) => {
-			prev[cur] = this.options[cur];
-			return prev;
-		}, {})
-		const latest = await latestVersion()(this.packageName, {version: distTag, ...options});
+		const latest = await latestVersion()(this.packageName, {version: distTag, registryUrl: this.options.registryUrl});
 
 		return {
 			latest,
